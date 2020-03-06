@@ -19,13 +19,13 @@ public class Covid19Controller {
     Covid19Service covid19Service;
     
     @GetMapping("/")
-    public String covid19() {
-        return "covid19";
+    public String covid19(Model model) {
+         List<LocationStats> allStats = covid19Service.getAllStats();
+        int totalReportedCases = allStats.stream().mapToInt(stat -> stat.getLatestTotalCases()).sum();
+        int totalNewCases = allStats.stream().mapToInt(stat -> stat.getDiffFromPrevDay()).sum();
+        model.addAttribute("locationStats", allStats);
+        model.addAttribute("totalReportedCases", totalReportedCases);
+        model.addAttribute("totalNewCases", totalNewCases);
+       return "covid19";
     }
-//    @GetMapping("/")
-//    public String covid19(Model model) {
-//        List<LocationStats> allStats = covid19Service.getAllStats();
-//        model.addAttribute("locationStats", allStats);
-//        return "covid19";
-//    }
 }

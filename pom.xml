@@ -12,7 +12,7 @@
     <artifactId>covid-19-tracker</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>covid-19-tracker</name>
-    <description>A simple Spring Boot / REST application for tracking the number of confirmed, deaths and recovered cases</description>
+    <description>A Spring Boot application for tracking the number of cases accross the globe</description>
 
     <properties>
         <java.version>1.8</java.version>

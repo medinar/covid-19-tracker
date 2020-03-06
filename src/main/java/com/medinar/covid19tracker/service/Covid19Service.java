@@ -1,5 +1,6 @@
 package com.medinar.covid19tracker.service;
 
+import static com.medinar.covid19tracker.constant.Constants.URL_COVID19_STATS;
 import com.medinar.covid19tracker.model.LocationStats;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +24,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class Covid19Service {
 
-    private static String URL_COVID19_STATS = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv";
     private List<LocationStats> allStats = new ArrayList<>();
 
     public List<LocationStats> getAllStats() {
@@ -34,25 +34,24 @@ public class Covid19Service {
     @Scheduled(cron = "* * 1 * * *")
     public void getData() throws IOException {
         try {
-            // TODO: FIX: java.net.UnknownHostException:
             List<LocationStats> newStats = new ArrayList<>();
             URL url = new URL(URL_COVID19_STATS);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            System.out.println("Connected :)");
             InputStream inputStream = connection.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
-            System.out.println("+++" + records.toString());
-//        for (CSVRecord record : records) {
-//            LocationStats locationStat = new LocationStats();
-//            locationStat.setState(record.get("Province/State"));
-//            locationStat.setCountry(record.get("Country/Region"));
-//            newStats.add(locationStat);
-//            System.out.println("locationStat: " + locationStat);
-//        }
+            for (CSVRecord record : records) {
+                LocationStats locationStat = new LocationStats();
+                locationStat.setState(record.get("Province/State"));
+                locationStat.setCountry(record.get("Country/Region"));
+                int latestCases = Integer.parseInt(record.get(record.size() - 1));
+                int prevDayCases = Integer.parseInt(record.get(record.size() - 2));
+                locationStat.setLatestTotalCases(latestCases);
+                locationStat.setDiffFromPrevDay(latestCases - prevDayCases);
+                newStats.add(locationStat);
+            }
             this.allStats = newStats;
-        }
-        catch (UnknownHostException ex) {
+        } catch (UnknownHostException ex) {
             System.err.println(ex);
         }
     }
