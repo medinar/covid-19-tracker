@@ -55,9 +55,26 @@ public class Covid19Service {
         for (CSVRecord record : records) {
             countries.add(record.get("Country/Region"));
         }
-        
+
         List<String> sortedCountries = countries.stream().collect(Collectors.toList());
         Collections.sort(sortedCountries, (o1, o2) -> o1.compareTo(o2));
         return sortedCountries;
+    }
+
+    public LocationStats getDataByCountry(String country) throws IOException {
+        LocationStats locationStat = new LocationStats();
+        URL url = new URL(URL_COVID19_STATS);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        InputStream inputStream = connection.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
+        for (CSVRecord record : records) {
+            if (country.equals(record.get("Country/Region"))) {
+                locationStat.setState(record.get("Province/State"));
+                locationStat.setCountry(record.get("Country/Region"));
+                break;
+            }
+        }
+        return locationStat;
     }
 }

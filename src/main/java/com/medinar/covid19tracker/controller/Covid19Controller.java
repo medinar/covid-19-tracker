@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
@@ -21,7 +22,7 @@ public class Covid19Controller {
 
     @Autowired
     Covid19Service covid19Service;
-    
+
     @GetMapping("/")
     public String covid19(Model model) throws Exception {
         List<LocationStats> allStats = covid19Service.getLocationStats();
@@ -30,14 +31,22 @@ public class Covid19Controller {
         model.addAttribute("locationStats", allStats);
         model.addAttribute("totalReportedCases", totalReportedCases);
         model.addAttribute("totalNewCases", totalNewCases);
-       return "covid19";
+        return "covid19";
     }
-    
+
     @GetMapping("/countries")
     public String countries(Model model) throws Exception {
         List<String> countries = covid19Service.getCountries();
         model.addAttribute("totalCountries", countries.size());
         model.addAttribute("countries", countries);
         return "countries";
+    }
+
+    @GetMapping(path = "/countries/{country}")
+    public String countries(Model model, @PathVariable String country) throws Exception {
+        LocationStats locationStat = covid19Service.getDataByCountry(country);
+        model.addAttribute("country", locationStat.getCountry());
+        model.addAttribute("state", locationStat.getState());
+        return "country";
     }
 }

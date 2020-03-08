@@ -13,7 +13,7 @@
             <p>This application lists the countries with reported confirmed cases.</p>
             <p>
                 <span>Total number of affected countries:</span>
-                <span th:text="${totalCountries}"</span>
+                <span th:text="${totalCountries}"></span>
             </p>
 
             <table class="table">
@@ -21,7 +21,11 @@
                     <th>Country</th>
                 </tr>
                 <tr th:each="country : ${countries}">
-                    <td th:text="${country}"></td>
+                    <td>
+                        <a th:href="@{/countries/{country}(country=${country})}">
+                            <span th:text="${country}"/>
+                        </a>
+                    </td>
                 </tr>
             </table>
         </div>
