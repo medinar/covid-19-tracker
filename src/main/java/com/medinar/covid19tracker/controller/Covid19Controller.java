@@ -26,11 +26,19 @@ public class Covid19Controller {
     @GetMapping("/")
     public String covid19(Model model) throws Exception {
         List<LocationStats> allStats = covid19Service.getLocationStats();
-        int totalReportedCases = allStats.stream().mapToInt(stat -> stat.getLatestTotalCases()).sum();
-        int totalNewCases = allStats.stream().mapToInt(stat -> stat.getDiffFromPrevDay()).sum();
+        int totalReportedCases = allStats.stream()
+                .mapToInt(stat -> stat.getLatestTotalCases())
+                .sum();
+        int totalNewCases = allStats.stream()
+                .mapToInt(stat -> stat.getDiffFromPrevDay())
+                .sum();
+        int totalPrevDayCases = allStats.stream()
+                .mapToInt(stat -> stat.getPreviousDayCases())
+                .sum();        
         model.addAttribute("locationStats", allStats);
         model.addAttribute("totalReportedCases", totalReportedCases);
         model.addAttribute("totalNewCases", totalNewCases);
+        model.addAttribute("totalPrevDayCases", totalPrevDayCases);
         return "covid19";
     }
 
@@ -43,13 +51,25 @@ public class Covid19Controller {
     }
 
     @GetMapping(path = "/countries/{country}")
-    public String countries(Model model, @PathVariable String country) throws Exception {
-        LocationStats locationStat = covid19Service.getDataByCountry(country);
-        model.addAttribute("country", locationStat.getCountry());
-        model.addAttribute("state", locationStat.getState());
-        model.addAttribute("latestCases", locationStat.getLatestCases());
-        model.addAttribute("previousDayCases", locationStat.getPreviousDayCases());
-        model.addAttribute("diffFromPrevDay", locationStat.getDiffFromPrevDay());
-        return "country";
+    public String countryAndStates(
+            Model model, 
+            @PathVariable String country
+    ) throws Exception {        
+        List<LocationStats> locationStats = covid19Service.getDataByCountry(country);
+        int totalReportedCases = locationStats.stream()
+                .mapToInt(stat -> stat.getLatestTotalCases())
+                .sum();
+        int totalNewCases = locationStats.stream()
+                .mapToInt(stat -> stat.getDiffFromPrevDay())
+                .sum();
+        int totalPrevDayCases = locationStats.stream()
+                .mapToInt(stat -> stat.getPreviousDayCases())
+                .sum();
+        model.addAttribute("locationStats", locationStats);
+        model.addAttribute("totalReportedCases", totalReportedCases);
+        model.addAttribute("totalNewCases", totalNewCases);
+        model.addAttribute("totalPrevDayCases", totalPrevDayCases);
+        return "covid19";
     }
+    
 }

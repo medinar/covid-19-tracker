@@ -38,6 +38,7 @@ public class Covid19Service {
             locationStat.setCountry(record.get("Country/Region"));
             int latestCases = Integer.parseInt(record.get(record.size() - 1));
             int prevDayCases = Integer.parseInt(record.get(record.size() - 2));
+            locationStat.setPreviousDayCases(prevDayCases);
             locationStat.setLatestTotalCases(latestCases);
             locationStat.setDiffFromPrevDay(latestCases - prevDayCases);
             newStats.add(locationStat);
@@ -60,26 +61,30 @@ public class Covid19Service {
         Collections.sort(sortedCountries, (o1, o2) -> o1.compareTo(o2));
         return sortedCountries;
     }
-
-    public LocationStats getDataByCountry(String country) throws IOException {
-        LocationStats locationStat = new LocationStats();
+    
+    public List<LocationStats> getDataByCountry(String country) throws IOException {
+        
         URL url = new URL(URL_COVID19_STATS);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         InputStream inputStream = connection.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
+        List<LocationStats> locationStats = new ArrayList<>();
         for (CSVRecord record : records) {
             if (country.equals(record.get("Country/Region"))) {
-                locationStat.setState(record.get("Province/State"));
+                LocationStats locationStat = new LocationStats();
                 locationStat.setCountry(record.get("Country/Region"));
+                locationStat.setState(record.get("Province/State"));
                 int latestCases = Integer.parseInt(record.get(record.size() - 1));
                 int prevDayCases = Integer.parseInt(record.get(record.size() - 2));
                 locationStat.setLatestCases(latestCases);
                 locationStat.setPreviousDayCases(prevDayCases);
+                locationStat.setLatestTotalCases(latestCases);
                 locationStat.setDiffFromPrevDay(latestCases - prevDayCases);
-                break;
+                locationStats.add(locationStat);
             }
         }
-        return locationStat;
+        return locationStats;
     }
+
 }

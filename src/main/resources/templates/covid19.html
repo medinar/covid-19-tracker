@@ -16,11 +16,11 @@
                 <h1 class="display-4" th:text="${totalReportedCases}"></h1>
                 <p class="lead">Total cases reported as of today</p>
                 <hr class="my-4">
-                <p>
-                    <span>New cases reported since previous day:</span>
-                    <span th:text="${totalNewCases}"></span>
-                </p>
-
+                <h2 class="display-4" th:text="${totalPrevDayCases}"></h2>
+                <p class="lead">Total cases reported as of yesterday</p>
+                <hr class="my-4">
+                <h3 class="display-4" th:text="${totalNewCases}"></h3>
+                <p class="lead">Total new cases reported</p>
             </div>
 
             <table class="table">
@@ -32,7 +32,11 @@
                 </tr>
                 <tr th:each="locationStat : ${locationStats}">
                     <td th:text="${locationStat.state}"></td>
-                    <td th:text="${locationStat.country}"></td>
+                    <td>
+                        <a th:href="@{/countries/{country}(country=${locationStat.country})}">
+                            <span th:text="${locationStat.country}"/>
+                        </a>
+                    </td>
                     <td th:text="${locationStat.latestTotalCases}">0</td>
                     <td th:text="${locationStat.diffFromPrevDay}">0</td>
                 </tr>
