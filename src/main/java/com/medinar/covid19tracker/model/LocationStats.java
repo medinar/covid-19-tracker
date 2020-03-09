@@ -13,8 +13,13 @@ import lombok.ToString;
 @ToString
 public class LocationStats {
 
-    private String state;
+    private String province;
     private String country;
+    private String state;
+    private String latitude;
+    private String longitude;
+    private int latestCases;
+    private int previousDayCases;
     private int latestTotalCases;
     private int diffFromPrevDay;
 

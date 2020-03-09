@@ -72,6 +72,11 @@ public class Covid19Service {
             if (country.equals(record.get("Country/Region"))) {
                 locationStat.setState(record.get("Province/State"));
                 locationStat.setCountry(record.get("Country/Region"));
+                int latestCases = Integer.parseInt(record.get(record.size() - 1));
+                int prevDayCases = Integer.parseInt(record.get(record.size() - 2));
+                locationStat.setLatestCases(latestCases);
+                locationStat.setPreviousDayCases(prevDayCases);
+                locationStat.setDiffFromPrevDay(latestCases - prevDayCases);
                 break;
             }
         }

@@ -47,6 +47,9 @@ public class Covid19Controller {
         LocationStats locationStat = covid19Service.getDataByCountry(country);
         model.addAttribute("country", locationStat.getCountry());
         model.addAttribute("state", locationStat.getState());
+        model.addAttribute("latestCases", locationStat.getLatestCases());
+        model.addAttribute("previousDayCases", locationStat.getPreviousDayCases());
+        model.addAttribute("diffFromPrevDay", locationStat.getDiffFromPrevDay());
         return "country";
     }
 }
